@@ -4,15 +4,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
   </head>
   <body>
-    <!-- <form action="action_page.php"> -->
-    <!--
-    <form target="_blank" onsubmit="createUri(this)">
-		Search string:<br>
-		<input type="text" name="search" id="search" value="search the google books api">
-		<br><br>
-		<input type="submit" value="Submit">
-	</form> 
-	-->
 	
 	<!-- <form id="demoForm" action="#" onsubmit="makeUri()"> -->
 	<form id="demoForm" action="#" onSubmit="return false">
@@ -20,63 +11,40 @@
   		<input type="submit" value="Submit">
 	</form>
     <div id="content"></div>
-    
-	
-    <!-- <script src="https://www.googleapis.com/books/v1/volumes?q=jane+austen&callback=handleResponse"></script> -->
-    <!-- <script src="demo_script_src.js"> -->
-    
-    
-	<!-- <script src="http://domain.com/js/script.js"> -->
-	<!-- 
-	<script src="https://www.googleapis.com/books/v1/volumes?q=js/script.js"></script>
-	<script type="text/javascript" src="js/script.js"></script> -->
-	
-	<!--
-	var fileref=document.createElement('script');
-	fileref.setAttribute("type","text/javascript");
-	fileref.setAttribute("src","scriptAnalytics.js");
-	document.getElementsByTagName("head")[0].appendChild(fileref);
-	-->
-	
-	
+   
 	<script>
+	/* See if we can get recordSet out of the global scope */
+	var recordSet = [];
+	
 	$(document).ready(function() {
 		alert("document ready");
 		$('#demoForm')[0].reset();
-		//var phrase = "chess+openings";
-		//$("<script>", {  src : "src=https://www.googleapis.com/books/v1/volumes?q=" + searchString + "&callback=handleResponse",  type : "text/javascript" }).appendTo("body");
-		//$("<script>", {  src : "https://www.googleapis.com/books/v1/volumes?q=" + phrase + "&callback=handleResponse"}).appendTo("body");
 	});
-	</script>
 	
-	
-	<!--
-	<script>
-	function makeUri(searchFld) {
-		//var searchString = "chess+openings";
-		var searchString = searchFld;
-		//$("<script>", {  src : "src=https://www.googleapis.com/books/v1/volumes?q=" + searchString + "&callback=handleResponse",  type : "text/javascript" }).appendTo("body");
-		$("<script>", {  src : "https://www.googleapis.com/books/v1/volumes?q=" + searchString + "&callback=handleResponse"}).appendTo("body");
-	});
-	</script> 
-	-->
-	
-	<script>
 	function handleResponse(response) {
+		
 		for (var i = 0; i < response.items.length; i++) {
-		var item = response.items[i];
-		// in production code, item.text should have the HTML entities escaped.
-		document.getElementById("content").innerHTML += "<br>" + item.volumeInfo.publishedDate  + "&nbsp;" + item.volumeInfo.title + "&nbsp;" + item.id + "&nbsp;" + item.volumeInfo.authors 
-		+ "&nbsp;" + item.volumeInfo.readingModes.text  + "&nbsp;"+ item.volumeInfo.canonicalVolumeLink + "&nbsp;" + item.accessInfo.webReaderLink + "<br /><br />";
-		}
+			var item = response.items[i];
+			//console.log(item);
+			// in production code, item.text should have the HTML entities escaped.
+			document.getElementById("content").innerHTML += "<br>" + item.volumeInfo.publishedDate  + "&nbsp;" + item.volumeInfo.title + "&nbsp;" + item.id + "&nbsp;" + item.volumeInfo.authors 
+			+ "&nbsp;" + item.volumeInfo.readingModes.text  + "&nbsp;"+ item.volumeInfo.canonicalVolumeLink + "&nbsp;" + item.accessInfo.webReaderLink + "<br /><br />";
+			
+			//Record(id, title, subtitle, authors, publisher, publishedDate, description)
+			record = new Record(item.id, item.volumeInfo.title, item.volumeInfo.subtitle, item.volumeInfo.authors,
+				item.volumeInfo.publisher, item.volumeInfo.publishedDate, item.volumeInfo.description);
+				
+			recordSet.push(record);
+		} 
+		console.log(recordSet);
+		//return recordSet;
 	}
+		
+		
+		
+	//}
     
-    //var searchString = "jane+austen";
-    </script>
-    
-    <script>
     var form = document.getElementById('demoForm');
-	//var searchFld = form.elements[0].value;
 
 	if ( window.addEventListener ) { // avoid errors in incapable browsers
 		form.addEventListener('submit', checkOnSubmit, true);
@@ -111,11 +79,28 @@
 			this.className = 'error';
 		}
 	} */
+	/* Function to create custom object for each record passed in */
+	
+	function Record(id, title, subtitle, authors, publisher, publishedDate, description) {
+			this.id = id; 				
+			this.title = title;		
+			this.subtitle = subtitle;	
+			this.authors = authors;				
+			this.publisher = publisher;					
+			this.publishedDate = publishedDate;				
+			this.description = description;			
+	
+			//functions
+			
+			this.info = function() {
+				return "id: " + this.id + " title: " + this.title + " subtitle: " + this.subtitle +
+					" authors: " + this.authors + " publisher: " + this.publisher + " publication date: " + 
+					this.publishedDate + " description: " + this.description + "."
+			}; 
+	 } 
+	
+	 /* End Function to create Custom object for each record passed in */
     </script>
-    
-    
-    
-    
     
     <!-- <script type="text/javascript" src="books_script.js"></script> -->
   </body>
@@ -126,19 +111,3 @@
 <html>
 <body>
 
-<!-- 
-<p>When you submit the form, a function is triggered which alerts some text.</p>
-
-<form action="demo_form.asp" onsubmit="myFunction()">
-  Enter name: <input type="text" name="fname">
-  <input type="submit" value="Submit">
-</form>
-
-<script>
-function myFunction() {
-    alert("The form was submitted");
-}
-</script>
-
-</body>
-</html> -->
