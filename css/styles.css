@@ -1,0 +1,59 @@
+/*
+* {
+	border: 1px solid red;
+} */
+body {
+    background-color: #7f9ccc;
+}
+#wrapper {
+    background-color: #ffffff;
+    margin: auto;
+    overflow: hidden;
+    position: relative;
+    top: 25px;
+    width: 960px;
+}
+
+#mainContent {
+    background-color: #ffffff;
+    height: 900px;
+    padding: 10px;
+    margin-left:auto;
+    margin-right:auto;
+    /* height:auto; */
+    /* width:auto; */
+}
+#inputFormSection {
+    /* width: 500px; */
+}
+#titleSelectSection {
+    /* position:absolute; */
+    /* width: 500px; */
+    float: left;
+    
+}
+#titleSelect {
+	display: inline;
+	margin-bottom: 100px;
+}
+#descriptionSection {
+    /* position:absolute; */s
+    /* width: 500px; */
+    /* float: left; */
+}
+#description {
+	display: inline;
+}
+
+#viewerCanvas {
+	width: 600px; 
+	height: 500px
+}
+
+/*
+fieldset {
+    border: 1px solid #2c587d;
+    margin: 10px;
+} */
+
+

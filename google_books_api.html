@@ -1,113 +1,80 @@
+<!DOCTYPE html>
 <html>
   <head>
     <title>Books API Example</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- jsapi necessary for Google Books preview functionlity -->
+    <!-- <script type="text/javascript" src="https://www.google.com/jsapi"></script> -->
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <!-- brute force starts here -->
+    <!--
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("books", "0");
+
+      function initialize() {
+        var viewer = new google.books.DefaultViewer(document.getElementById('viewerCanvas'));
+        viewer.load('ISBN:0738531367');
+      }
+
+      google.setOnLoadCallback(initialize);
+    </script>
+    -->
+    <!-- brute force ends here -->
   </head>
   <body>
-	
-	<!-- <form id="demoForm" action="#" onsubmit="makeUri()"> -->
-	<form id="demoForm" action="#" onSubmit="return false">
-  		Enter search: <input type="text" name="searchString" id="searchString">
-  		<input type="submit" value="Submit">
-	</form>
-    <div id="content"></div>
-   
-	<script>
-	/* See if we can get recordSet out of the global scope */
-	var recordSet = [];
-	
-	$(document).ready(function() {
-		alert("document ready");
-		$('#demoForm')[0].reset();
-	});
-	
-	function handleResponse(response) {
-		
-		for (var i = 0; i < response.items.length; i++) {
-			var item = response.items[i];
-			//console.log(item);
-			// in production code, item.text should have the HTML entities escaped.
-			document.getElementById("content").innerHTML += "<br>" + item.volumeInfo.publishedDate  + "&nbsp;" + item.volumeInfo.title + "&nbsp;" + item.id + "&nbsp;" + item.volumeInfo.authors 
-			+ "&nbsp;" + item.volumeInfo.readingModes.text  + "&nbsp;"+ item.volumeInfo.canonicalVolumeLink + "&nbsp;" + item.accessInfo.webReaderLink + "<br /><br />";
+	<div id="wrapper">
+		<div id="mainContent">
+			<section id="inputFormSection">
+				<form id="demoForm" action="#" onSubmit="return false">
+					<!-- <fieldset form="demoForm"> -->
+					<!-- use of fieldset breaks submit -->
+					<legend>Search Google Books:</legend>
+                        <br />
+						<input type="text" name="searchString" id="searchString">
+						<input type="submit" value="Submit">
+					<!-- </fieldset> -->
+					
+				</form>
+			</section>
+			<div id="content">
+			</div>
+			<div id="searchBanner">
+			</div>
+			<!-- SELECT BOX -->
+			<div id="titleSelectSection">
+				<div id="selects">
+					<div id="titleSelect" style="float:left;margin-right:15px;"> Select a title from the following: <br>
+						<select name="primarySelect" id="primarySelect">
+							<option>----</option>
+						</select>
+					</div>
+				</div>
+			</div>
 			
-			//Record(id, title, subtitle, authors, publisher, publishedDate, description)
-			record = new Record(item.id, item.volumeInfo.title, item.volumeInfo.subtitle, item.volumeInfo.authors,
-				item.volumeInfo.publisher, item.volumeInfo.publishedDate, item.volumeInfo.description);
-				
-			recordSet.push(record);
-		} 
-		console.log(recordSet);
-		//return recordSet;
-	}
-		
-		
-		
-	//}
-    
-    var form = document.getElementById('demoForm');
-
-	if ( window.addEventListener ) { // avoid errors in incapable browsers
-		form.addEventListener('submit', checkOnSubmit, true);
-		//userFld.addEventListener('focus', showUserInfo, false);
-		//userFld.addEventListener('blur', checkUserInfo, false);
-	}
-
-	function checkOnSubmit(e) {
-		
-		alert(form.elements[0].value);
-		$("#content").html("");
-		$("<script>", {  src : "https://www.googleapis.com/books/v1/volumes?q=" + form.elements[0].value + "&callback=handleResponse"}).appendTo("body");
-		$('#demoForm')[0].reset();
-	
-	}
-
-	/*
-	function showUserInfo(e) {
-		//alert(e.type); // access event properties
-		//var form = this.form; // to access form 
-		//var terms = form.elements['terms']; // acccess other form elements
-		//alert(terms.value);
-	
-		this.className = 'active'; // display span with validation info
-	} */
-
-	/*
-	function checkUserInfo(e) {
-		this.className = '';
-	
-		if ( this.value.length < 8 ) {
-			this.className = 'error';
-		}
-	} */
-	/* Function to create custom object for each record passed in */
-	
-	function Record(id, title, subtitle, authors, publisher, publishedDate, description) {
-			this.id = id; 				
-			this.title = title;		
-			this.subtitle = subtitle;	
-			this.authors = authors;				
-			this.publisher = publisher;					
-			this.publishedDate = publishedDate;				
-			this.description = description;			
-	
-			//functions
+			<div id="descriptionSection">
+				<div id="description">
+					<p>some text to be replaced dynamically by a description</p>
+				</div>
+			</div>
 			
-			this.info = function() {
-				return "id: " + this.id + " title: " + this.title + " subtitle: " + this.subtitle +
-					" authors: " + this.authors + " publisher: " + this.publisher + " publication date: " + 
-					this.publishedDate + " description: " + this.description + "."
-			}; 
-	 } 
-	
-	 /* End Function to create Custom object for each record passed in */
-    </script>
-    
-    <!-- <script type="text/javascript" src="books_script.js"></script> -->
+			<div id="viewerCanvas">
+			</div>
+			
+			<!-- BUTTONS FOR AJAX CALLS & GOOGLE READER -->
+			<div id="actionButtons">
+				<button type="button" id="notesBtn">Get my notes for this book!</button>
+				<!-- https://developers.google.com/books/docs/viewer/examples/ -->
+				<button type="button" id="googleBtn">Get the Google reader version of this book!</button>
+			</div> <!-- END: BUTTONS FOR AJAX CALLS & GOOGLE READER -->
+
+		</div> <!-- end mainContent -->
+	</div> <!-- end wrapper -->
+    <script type="text/javascript" src="js/book_script.js"></script>
   </body>
 </html>
 
 
-<!DOCTYPE html>
-<html>
-<body>
+
+
 
