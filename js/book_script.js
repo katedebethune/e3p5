@@ -38,9 +38,7 @@
 		//primarySelect.addEventListener('change', showDescription, true);
 		primarySelect.addEventListener('change', buildCurrentRecord, true);
 		googleBtn.addEventListener('click', showGooglePreview, true);
-		//notesBtn.addEventListener('click', showNotes, true);
-		//userFld.addEventListener('focus', showUserInfo, false);
-		//userFld.addEventListener('blur', checkUserInfo, false);
+		notesBtn.addEventListener('click', showNotes, true);
 	}
 	/*
 	selectField.addEventListener("change", function(){
@@ -55,6 +53,7 @@
 		recordSet = [];
 		document.getElementById('searchBanner').innerHTML = "";
 		document.getElementById('primarySelect').options.length = 1;
+		// help for the following came from: http://stackoverflow.com/questions/610995/cant-append-script-element
 		$("<script>", {  src : "https://www.googleapis.com/books/v1/volumes?q=" + form.elements[0].value + "&callback=handleResponse"}).appendTo("body");
 		$('#demoForm')[0].reset();
 		
@@ -136,46 +135,69 @@
 	
 	/* End event handler for notesBtn click */
 
-	/*
-	function showUserInfo(e) {
-		//alert(e.type); // access event properties
-		//var form = this.form; // to access form 
-		//var terms = form.elements['terms']; // acccess other form elements
-		//alert(terms.value);
+	/************* AJAX code ******************/
 	
-		this.className = 'active'; // display span with validation info
-	} */
+	//  Create the XHR, intitalize the connection with open()) 
+	//    and send the request. This part is done for you. 
+	//var xhr = new XMLHttpRequest();
+	
+	function showNotes(e) {
+		/********* CONDITIONAL ADDED FOR OLDER IE ********/
+		if (window.XMLHttpRequest)
+		  {// code for IE7+, Firefox, Chrome, Opera, Safari
+		  var xhr = new XMLHttpRequest();
+		  }
+		else
+		  {// code for IE6, IE5
+		  var xhr = new ActiveXObject("Microsoft.XMLHTTP");
+		  }
+		/******** END: CONDITIONAL FOR OLDER IE ***********/
+		
+		//xhr.open("GET", "http://courses.dce.harvard.edu/~cscie3/ajax.php"); 
+		xhr.open("GET", "http://p1.kdeb-csci-e15.me/cats_ajax.php");
+		xhr.send();
+		
+		// YOUR CODE HERE: Add a readystatechange listener function to respond to the HTTP response
+		
+		xhr.onreadystatechange=function()
+		{
+		  var el = document.getElementById("notesArea");
+		  if (xhr.readyState==4 && xhr.status==200)
+			{
+			alert("inside document ready");
+			/*
+			JSON.parse('{"1": 1, "2": 2, "3": {"4": 4, "5": {"6": 6}}}', function(k, v) {
+			  console.log(k); // log the current property name, the last is "".
+			  return v;       // return the unchanged property value.
+			});
+			*/
+			JSON.parse(this.response, function(k, v) {
+				console.log(k + ": " + v);
+				//return v;
+			});
+			//alert(JSON.parse(this.response));
+			//var l = JSON.parse(this.response);
+			//logMessage(l, el);
+			}
+		}
+		
+		/********* LOGGING CODE ********/
 
-	/*
-	function checkUserInfo(e) {
-		this.className = '';
-	
-		if ( this.value.length < 8 ) {
-			this.className = 'error';
+		// Utility function for logging convenience
+		// Logs msg to the element with given id
+		// If id is undefined, logs to #output
+		/*
+		function logMessage(msg, id) {
+			if (!id) {
+				id = "output";
+			}
+			document.getElementById(id).innerHTML += msg + "<br>";
 		}
-	} */
-	/* Function to return the search term for use outside on submit */
-	
-	/*
-	function SearchTerm(searchTerm) {
-		this.searchTerm = searchTerm;
-		console.log("Inside SearchTerm custom object");
-		
-		//functions
-		// getSearchTerm
-		this.getSearchTerm = function() {
-			return this.searchTerm;
-		}
-		
-		// clearSearchTerm
-		this.clearSearchTerm = function() {
-			this.searchTerm = "";
-			return this.searchTerm;
-		}
+		*/
+		/*********** END LOGGING CODE ****************/
 	}
-	*/
+
 	
-	/* End function to return the search term for use outside on submit */
 	
 	/* Function to create custom object for each record passed in */
 	
