@@ -3,6 +3,7 @@
 	var recordSet = [];
 	var currentSearchTerm = "";
 	var currentId;
+	var currentRecord = {};
 	
 	
 	$(document).ready(function() {
@@ -20,7 +21,7 @@
 			
 			//Record(id, title, subtitle, authors, publisher, publishedDate, description)
 			record = new Record(item.id, item.volumeInfo.title, item.volumeInfo.subtitle, item.volumeInfo.authors,
-				item.volumeInfo.publisher, item.volumeInfo.publishedDate, item.volumeInfo.description, item.previewLink);
+				item.volumeInfo.publisher, item.volumeInfo.publishedDate, item.volumeInfo.description, item.accessInfo.webReaderLink);
 				
 			recordSet.push(record);
 		} 
@@ -34,7 +35,8 @@
     var form = document.getElementById('demoForm');
 	if ( window.addEventListener ) { // avoid errors in incapable browsers
 		form.addEventListener('submit', checkOnSubmit, true);
-		primarySelect.addEventListener('change', showDescription, true);
+		//primarySelect.addEventListener('change', showDescription, true);
+		primarySelect.addEventListener('change', buildCurrentRecord, true);
 		googleBtn.addEventListener('click', showGooglePreview, true);
 		//notesBtn.addEventListener('click', showNotes, true);
 		//userFld.addEventListener('focus', showUserInfo, false);
@@ -62,11 +64,10 @@
 	}
 	/* End event handler for form submit */
 	
-	/* Event handler for showDescription */
-	function showDescription(e) {
-		//var id = primarySelect.value;
+	/* Event handler for buildCurrentRecord */
+	function buildCurrentRecord(e) {
 		currentId = primarySelect.value;
-		alert("We're in showDescription and the value is " + currentId);
+		alert("We're in buildCurrentRecord and the value is " + currentId);
 		var descript;
 		
 		// loop to find the array entry that matches the id
@@ -76,11 +77,19 @@
 			for ( var i = 0 ; i < len ; i++ ) {
 				if ( recordSet[i].id == currentId ) {
 					alert( recordSet[i].id + " == " + currentId );
-					descript = recordSet[i].description;
+					currentRecord = new Record(recordSet[i].id, recordSet[i].title, recordSet[i].subtitle, recordSet[i].authors,
+				recordSet[i].publisher, recordSet[i].publishedDate, recordSet[i].description, recordSet[i].previewLink); 
+					
 				}
 			}
 		}
-		document.getElementById('description').innerHTML = descript;
+		alert(currentRecord.info());
+		showDescription(currentRecord.description);
+	}
+	/* End event handler for showDescription */
+	/* Event handler for showDescription */
+	function showDescription(description) {
+		document.getElementById('description').innerHTML = description;
 	}
 	/* End event handler for showDescription */
 	
@@ -88,7 +97,7 @@
 	
 	// Doesn't work when js code is separated into .js file 
 	// Try with preview link embedded in an iframe
-	/*
+	
 	function showGooglePreview(e) {
       //{ other_params : 'libraries=places&sensor=false&key=my_key', callback : ... })
       
@@ -97,36 +106,29 @@
       function initialize() {
         var viewer = new google.books.DefaultViewer(document.getElementById('viewerCanvas'));
         viewer.load('ISBN:0738531367');
-        //viewer.load('id:' + currentId);
+        //viewer.load('id:' + currentRecord.id);
       }
       google.setOnLoadCallback(initialize);
     }
-    */
+    
 	/* End event handler for googleBtn click */
 	
 	/* Event handler for googleBtn click v2 */
+	/*
 	function showGooglePreview(e) {
-		alert("inside showGooglePreview function");
-		var preview;
-		if ( recordSet ) {
-			var len = recordSet.length;
-			for ( var i = 0 ; i < len ; i++ ) {
-				if ( recordSet[i].id == currentId ) {
-					alert( recordSet[i].id + " == " + currentId );
-					preview = recordSet[i].previewLink;
-				}
-			}
-		}
-		alert(preview);
+		alert("inside showGooglePreview function, current record is <br>" + currentRecord.previewLink);
+		
 		// set up an iframe in the viewerCanvas div
 		var x = document.createElement("IFRAME");
 		//document.getElementsByTagName("H1")[0].setAttribute("class", "democlass");
 		x.setAttribute("width", "600px");
 		x.setAttribute("height", "500px");
 		//document.getElementById("myFrame").src = "http://www.cnn.com";
-		x.src = preview;
+		x.src = currentRecord.previewLink;
 		document.getElementById('viewerCanvas').appendChild(x);
+		
 	}
+	*/
 	/* END: Event handler for googleBtn click v2 */
 	
 	
