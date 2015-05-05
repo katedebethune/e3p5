@@ -154,7 +154,7 @@
 		/******** END: CONDITIONAL FOR OLDER IE ***********/
 		
 		//xhr.open("GET", "http://courses.dce.harvard.edu/~cscie3/ajax.php"); 
-		xhr.open("GET", "http://p1.kdeb-csci-e15.me/cats_ajax.php");
+		xhr.open("GET", "http://p1.kdeb-csci-e15.me/ajax.php");
 		xhr.send();
 		
 		// YOUR CODE HERE: Add a readystatechange listener function to respond to the HTTP response
@@ -173,6 +173,9 @@
 			*/
 			JSON.parse(this.response, function(k, v) {
 				console.log(k + ": " + v);
+				if (k == "notes") {
+					el.innerHTML += k + ": " + v + "<br>";
+				}
 				//return v;
 			});
 			//alert(JSON.parse(this.response));
