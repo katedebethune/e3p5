@@ -48,6 +48,12 @@ body {
 #viewerCanvas {
 	width: 600px; 
 	height: 500px
+	background-color: gray; 
+	display:none;
+}
+
+#zippy {
+	display: inline;
 }
 
 /*

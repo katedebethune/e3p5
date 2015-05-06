@@ -1,15 +1,25 @@
+/*
+<script src="https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:0738531367&callback=processDynamicLinksResponse"></script>
+*/
 
-	/* See if we can get recordSet out of the global scope */
-	var recordSet = [];
-	var currentSearchTerm = "";
-	var currentId;
-	var currentRecord = {};
-	
-	
-	$(document).ready(function() {
+
+ $(document).ready(function() {
 		alert("document ready");
 		$('#demoForm')[0].reset();
+		/* See if we can get recordSet out of the global scope */
+		var recordSet = [];
+		var currentSearchTerm = "";
+		var currentId;
+		var currentRecord = {};
 	});
+	
+	/*
+	 * handleResponse
+	 * @param - response
+	 * 
+	 * Callback function from the Google Books api
+	 *
+	 */ 
 	
 	function handleResponse(response) {
 		for (var i = 0; i < response.items.length; i++) {
@@ -32,41 +42,118 @@
 		populateSelect(recordSet);
 	}
     
+    /*
+     * Event Listeners
+     * 
+     * Clean this up - get the var out of global space
+     */
     var form = document.getElementById('demoForm');
 	if ( window.addEventListener ) { // avoid errors in incapable browsers
 		form.addEventListener('submit', checkOnSubmit, true);
 		//primarySelect.addEventListener('change', showDescription, true);
 		primarySelect.addEventListener('change', buildCurrentRecord, true);
-		googleBtn.addEventListener('click', showGooglePreview, true);
+		// determine if notes exist using AJAX before showing the button?
 		notesBtn.addEventListener('click', showNotes, true);
-	}
-	/*
-	selectField.addEventListener("change", function(){
-		var myVal = selectField.value;
-	*/
-	
-	/* Event handler function for form submit */
-	function checkOnSubmit(e) {
-		alert(form.elements[0].value);
-		currentSearchTerm = form.elements[0].value;
-		$("#content").html("");
-		recordSet = [];
-		document.getElementById('searchBanner').innerHTML = "";
-		document.getElementById('primarySelect').options.length = 1;
-		// help for the following came from: http://stackoverflow.com/questions/610995/cant-append-script-element
-		$("<script>", {  src : "https://www.googleapis.com/books/v1/volumes?q=" + form.elements[0].value + "&callback=handleResponse"}).appendTo("body");
-		$('#demoForm')[0].reset();
+		zippy.addEventListener('click', togglePreview, true);
 		
-		// make getter and setter work for the search term
-		//var currentSearchTerm = SearchTerm(form.elements[0].value);
-	
 	}
-	/* End event handler for form submit */
 	
+	/* Zippy code ex from html file */
+	/*
+	<div id="zippy"">
+        		<a href="javascript:togglePreview();">Toggle book preview</a>
+        		<div id="viewerCanvas" ></div>
+    		</div>
+    		
+    */
+     
+	/*
+	 * GOOGLE DYNAMIC BOOK PREVIEW FUNCTIONS 
+	 *
+	 */
+	
+	 var isbn;
+
+	function processDynamicLinksResponse(booksInfo) {
+		alert("inside processDynamicLinksResponse");
+		alert(booksInfo);
+		/*
+		$.each( booksInfo, function( i, val ) {
+ 			 //$( "#" + val ).text( "Mine is " + val + "." );
+ 			 alert(i);
+ 		}); */
+		
+		for (id in booksInfo) {
+		  isbn = id;
+		  alert(isbn);
+		  if (booksInfo[id] && booksInfo[id].preview == 'partial') {
+			document.getElementById('zippy').style.display = 'block';
+			google.load("books", "0");
+		  }
+		}
+	}
+
+	function loadPreview() {
+		var viewer = new google.books.DefaultViewer(document.getElementById('viewerCanvas'));
+		viewer.load(isbn);
+	}
+
+	function togglePreview(e) {
+		alert("inside toggle preview event handler");
+		var canvas = document.getElementById('viewerCanvas');
+		if (canvas.style.display == 'none') {
+		  canvas.style.display = 'block';
+		  loadPreview();
+		} 
+		else {
+		  canvas.style.display = 'none';
+		}
+	}
+	
+	/*
+	 * END: GOOGLE DYNAMIC BOOK PREVIEW FUNCTIONS 
+	 *
+	 */
+	
+	/* 
+	 * checkOnSubmit
+	 * @param - e
+	 * 
+	 * Event handler function for search form submit 
+	 */
+	function checkOnSubmit(e) {
+		//(form.elements[0].value);
+		if ( form.elements[0].value ) {
+			currentSearchTerm = form.elements[0].value;
+			$("#content").html("");
+			recordSet = [];
+			document.getElementById('searchBanner').innerHTML = "";
+			document.getElementById('primarySelect').options.length = 1;
+			// help for the following came from: http://stackoverflow.com/questions/610995/cant-append-script-element
+			$("<script>", {  src : "https://www.googleapis.com/books/v1/volumes?q=" + form.elements[0].value + "&callback=handleResponse"}).appendTo("body");
+			$('#demoForm')[0].reset();
+			$('#notesArea').empty();
+		} 
+		else {
+			//alert( "Please enter your search terms." );
+			form.elements[0].focus();
+		}	
+	}
+
+	/*
+	 * buildCurrentRecord
+	 * @param - e 
+	 *
+	 * Creates a record for the currently selected value
+	 * Calls clear description & show description
+	 */
+	 
 	/* Event handler for buildCurrentRecord */
 	function buildCurrentRecord(e) {
+		$('#description').empty();
+		$('#notesArea').empty();
 		currentId = primarySelect.value;
-		alert("We're in buildCurrentRecord and the value is " + currentId);
+		//alert("We're in buildCurrentRecord and the value is " + currentId);
 		var descript;
 		
 		// loop to find the array entry that matches the id
@@ -75,43 +162,72 @@
 			var len = recordSet.length;
 			for ( var i = 0 ; i < len ; i++ ) {
 				if ( recordSet[i].id == currentId ) {
-					alert( recordSet[i].id + " == " + currentId );
+					//alert( recordSet[i].id + " == " + currentId );
 					currentRecord = new Record(recordSet[i].id, recordSet[i].title, recordSet[i].subtitle, recordSet[i].authors,
 				recordSet[i].publisher, recordSet[i].publishedDate, recordSet[i].description, recordSet[i].previewLink); 
 					
 				}
 			}
 		}
-		alert(currentRecord.info());
+		//alert(currentRecord.info());
+		//alert(currentRecord.id);
 		showDescription(currentRecord.description);
+		$("<script>", { src : "https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:0738531367&callback=processDynamicLinksResponse" } ).appendTo("body");
 	}
-	/* End event handler for showDescription */
-	/* Event handler for showDescription */
+	
+	/*
+	 * showDescription
+	 *
+	 * @param - description
+	 *
+	 * called by a click of the form submit button
+	 * to do: add other data elements for the current record
+	 */
+	
 	function showDescription(description) {
 		document.getElementById('description').innerHTML = description;
 	}
-	/* End event handler for showDescription */
 	
-	/* Event handler for googleBtn click v1 */
+	/*
+	 * clearDescription
+	 *
+	 * @param - NONE
+	 *
+	 * called by a click of the form submit button
+	 * to do: add other data elements for the current record
+	 */
 	
-	// Doesn't work when js code is separated into .js file 
-	// Try with preview link embedded in an iframe
+	/*
+	function clearDescription() {
+		$('#description').empty();
+	} */
 	
+	/* 
+	 * showGooglePreview
+	 * @param - e
+	 * 
+	 * Not working right now
+	 * Doesn't work when js code is separated into .js file 
+	 * Try with preview link embedded in an iframe
+	 */
+	
+	
+	/*
 	function showGooglePreview(e) {
       //{ other_params : 'libraries=places&sensor=false&key=my_key', callback : ... })
       
       //google.load("books", "0", { other_params : 'key=AIzaSyDg_3CqVhiLDOU6EjCSkY9X7o_CGg8KwSQ' });
-      google.load("books", "0");
-      function initialize() {
-        var viewer = new google.books.DefaultViewer(document.getElementById('viewerCanvas'));
-        viewer.load('ISBN:0738531367');
-        //viewer.load('id:' + currentRecord.id);
-      }
-      google.setOnLoadCallback(initialize);
+      //google.load("books", "0");
+      //function initialize() {
+      //  var viewer = new google.books.DefaultViewer(document.getElementById('viewerCanvas'));
+      //  viewer.load('ISBN:0738531367');
+      //  //viewer.load('id:' + currentRecord.id);
+      //}
+      //google.setOnLoadCallback(initialize);
+      getMyBooks();
     }
+    */
     
-	/* End event handler for googleBtn click */
-	
 	/* Event handler for googleBtn click v2 */
 	/*
 	function showGooglePreview(e) {
@@ -130,19 +246,20 @@
 	*/
 	/* END: Event handler for googleBtn click v2 */
 	
-	
-	/* Event handler for notesBtn click */
-	
-	/* End event handler for notesBtn click */
-
-	/************* AJAX code ******************/
-	
-	//  Create the XHR, intitalize the connection with open()) 
-	//    and send the request. This part is done for you. 
-	//var xhr = new XMLHttpRequest();
+	/* 
+	 * showNotes
+	 *
+	 * @param - e
+	 *
+	 * Makes AJAX 'GET' call to a prefabbed set of notes in JSON
+	 * format hosted at http://p1.kdeb-csci-e15.me/ajax.php
+	 *
+	 */
 	
 	function showNotes(e) {
-		/********* CONDITIONAL ADDED FOR OLDER IE ********/
+		/*
+		 * Conditional added for older IE
+		 */
 		if (window.XMLHttpRequest)
 		  {// code for IE7+, Firefox, Chrome, Opera, Safari
 		  var xhr = new XMLHttpRequest();
@@ -151,58 +268,44 @@
 		  {// code for IE6, IE5
 		  var xhr = new ActiveXObject("Microsoft.XMLHTTP");
 		  }
-		/******** END: CONDITIONAL FOR OLDER IE ***********/
 		
-		//xhr.open("GET", "http://courses.dce.harvard.edu/~cscie3/ajax.php"); 
 		xhr.open("GET", "http://p1.kdeb-csci-e15.me/ajax.php");
 		xhr.send();
-		
-		// YOUR CODE HERE: Add a readystatechange listener function to respond to the HTTP response
 		
 		xhr.onreadystatechange=function()
 		{
 		  var el = document.getElementById("notesArea");
 		  if (xhr.readyState==4 && xhr.status==200)
 			{
-			alert("inside document ready");
-			/*
-			JSON.parse('{"1": 1, "2": 2, "3": {"4": 4, "5": {"6": 6}}}', function(k, v) {
-			  console.log(k); // log the current property name, the last is "".
-			  return v;       // return the unchanged property value.
-			});
-			*/
+			alert("inside xhr ready");
+			
 			JSON.parse(this.response, function(k, v) {
-				console.log(k + ": " + v);
-				if (k == "notes") {
-					el.innerHTML += k + ": " + v + "<br>";
-				}
+					console.log(k + ": " + v);
+					if (k == "notes") {
+						el.innerHTML += k + ": " + v + "<br>";
+					}
 				//return v;
-			});
-			//alert(JSON.parse(this.response));
-			//var l = JSON.parse(this.response);
-			//logMessage(l, el);
+				});
 			}
 		}
-		
-		/********* LOGGING CODE ********/
-
-		// Utility function for logging convenience
-		// Logs msg to the element with given id
-		// If id is undefined, logs to #output
-		/*
-		function logMessage(msg, id) {
-			if (!id) {
-				id = "output";
-			}
-			document.getElementById(id).innerHTML += msg + "<br>";
-		}
-		*/
-		/*********** END LOGGING CODE ****************/
 	}
 
-	
-	
-	/* Function to create custom object for each record passed in */
+	/* 
+	 * Record()
+	 * 
+	 * @param - id
+	 * @param - title
+	 * @param - subtitle
+	 * @param - authors
+	 * @param - publisher
+	 * @param - publishedDate
+	 * @param - description
+	 * @param - previewLink
+	 * @param - searchTerm
+	 * 
+	 * Function to create custom object for each record passed in by 
+	 * the handleResponse() callback method
+	 */
 	
 	function Record(id, title, subtitle, authors, publisher, publishedDate, description, previewLink, searchTerm) {
 			this.id = id; 				
@@ -224,10 +327,14 @@
 					this.previewLink + "."
 			}; 
 	 } 
-	
-	 /* End Function to create Custom object for each record passed in */
 	 
-	/* populate the select control with titles & authors */
+	/* 
+	 * populateSelect()
+	 * 
+	 * @param - recordSet
+	 *
+	 * populates the select control with titles & authors 
+	 */
 	function populateSelect(recordSet) {
 		'use strict';
 		//get the select field by id
@@ -256,5 +363,4 @@
 			selectField.appendChild(element);
 		}
 	}  
-	/* populate the select control with titles & authors */
 

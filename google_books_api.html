@@ -5,6 +5,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <!-- jsapi necessary for Google Books preview functionlity -->
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <!-- <script type="text/javascript" src="js/gb_script.js"></script> -->
     <link rel="stylesheet" type="text/css" href="css/styles.css">
     <!-- brute force starts here -->
     <!--
@@ -57,9 +58,15 @@
 					<p>some text to be replaced dynamically by a description</p>
 				</div>
 			</div>
-			
+			<!-- 
 			<div id="viewerCanvas">
-			</div>
+			</div> -->
+			
+			<!-- Zippy example https://google-developers.appspot.com/books/docs/viewer/examples/book-dynamiclinks-zippy -->
+			<div id="zippy" >
+        		Toggle book preview
+        		<div id="viewerCanvas"></div>
+    		</div>
 			
 			<div id="notesArea">
 			</div>
@@ -68,12 +75,13 @@
 			<div id="actionButtons">
 				<button type="button" id="notesBtn">Get my notes for this book!</button>
 				<!-- https://developers.google.com/books/docs/viewer/examples/ -->
-				<button type="button" id="googleBtn">Get the Google reader version of this book!</button>
+				<!-- <button type="button" id="googleBtn">Get the Google reader version of this book!</button> -->
 			</div> <!-- END: BUTTONS FOR AJAX CALLS & GOOGLE READER -->
 
 		</div> <!-- end mainContent -->
 	</div> <!-- end wrapper -->
-    <script type="text/javascript" src="js/book_script.js"></script>
+    <script type="text/javascript" src="js/script.js"></script>
+    <!-- <script src="https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:0738531367&callback=processDynamicLinksResponse"></script> -->
   </body>
 </html>
 
