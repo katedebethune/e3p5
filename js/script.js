@@ -18,6 +18,7 @@
 	 * @param - response
 	 * 
 	 * Callback function from the Google Books api
+	 * Returns list of books
 	 *
 	 */ 
 	
@@ -35,13 +36,30 @@
 				
 			recordSet.push(record);
 		} 
-		console.log(recordSet);
+		//console.log(recordSet);
 		// Create the h1 displaying the current search term
 		document.getElementById('searchBanner').innerHTML += "<h1>You searched for: " + currentSearchTerm;
 		// pass record set to another function that builds the select list
 		populateSelect(recordSet);
+		//giveMeAListofIds(recordSet);
 	}
     
+    function giveMeAListofIds(recordSet) {
+		var r = this.recordSet
+		//console.log(r);
+		
+		$.each(r, function( index ) {
+			console.log(this.id);
+			//$('#idArea').html('\"id:\"'+ this.id + '\"notes:\" <br />');
+			document.getElementById('idArea').innerHTML += '{ \"id\": \"'+ this.id + '\", \"notes\":      }<br />'
+			//{ "id": "CcM4H6eswCUC", "notes": "Lorum Ipsum Dolor" }
+			
+		});
+		
+ 	}
+ 	
+
+ 	   
     /*
      * Event Listeners
      * 
@@ -69,6 +87,8 @@
      
 	/*
 	 * GOOGLE DYNAMIC BOOK PREVIEW FUNCTIONS 
+	 * 
+	 * For handling presentation of book in embedded viewer for a single title
 	 *
 	 */
 	
@@ -153,7 +173,7 @@
 		$('#description').empty();
 		$('#notesArea').empty();
 		currentId = primarySelect.value;
-		//alert("We're in buildCurrentRecord and the value is " + currentId);
+		alert("We're in buildCurrentRecord and the value is " + currentId);
 		var descript;
 		
 		// loop to find the array entry that matches the id
@@ -170,7 +190,7 @@
 			}
 		}
 		//alert(currentRecord.info());
-		//alert(currentRecord.id);
+		alert(currentRecord.id);
 		showDescription(currentRecord.description);
 		$("<script>", { src : "https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:0738531367&callback=processDynamicLinksResponse" } ).appendTo("body");
 	}
@@ -260,14 +280,12 @@
 		/*
 		 * Conditional added for older IE
 		 */
-		if (window.XMLHttpRequest)
-		  {// code for IE7+, Firefox, Chrome, Opera, Safari
-		  var xhr = new XMLHttpRequest();
-		  }
-		else
-		  {// code for IE6, IE5
-		  var xhr = new ActiveXObject("Microsoft.XMLHTTP");
-		  }
+		if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+			var xhr = new XMLHttpRequest();
+		}
+		else {// code for IE6, IE5
+			var xhr = new ActiveXObject("Microsoft.XMLHTTP");
+		}
 		
 		xhr.open("GET", "http://p1.kdeb-csci-e15.me/ajax.php");
 		xhr.send();
@@ -276,19 +294,21 @@
 		{
 		  var el = document.getElementById("notesArea");
 		  if (xhr.readyState==4 && xhr.status==200)
-			{
-			alert("inside xhr ready");
-			
-			JSON.parse(this.response, function(k, v) {
-					console.log(k + ": " + v);
-					if (k == "notes") {
-						el.innerHTML += k + ": " + v + "<br>";
+		  {
+			var obj = JSON.parse(this.response);
+			for ( var p in obj ) {
+				var innerObj = obj[p];
+				for ( var q in innerObj ) {
+					//console.log("id: " + innerObj[q].id + " notes: " + innerObj[q].notes);
+					if ( innerObj[q].id == currentRecord.id ) {
+						el.innerHTML = innerObj[q].notes;
 					}
-				//return v;
-				});
+				}
 			}
+		  }
 		}
-	}
+	} 
+	
 
 	/* 
 	 * Record()
