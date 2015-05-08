@@ -16,7 +16,7 @@ body {
 
 #mainContent {
     background-color: #ffffff;
-    height: 10000px;
+    height: auto;
     padding: 10px;
     margin-left:auto;
     margin-right:auto;
@@ -57,9 +57,9 @@ body {
 	/* display:none; */
 }
 
-#viewerCanvas {
-	/* height: 600px; */
-    /* width: 500px; */
+#viewerCanvasOuter {
+	height: 550px;
+    width: 600px;
 	background-color: none; 
 	/* display:none; */
 }
