@@ -11,6 +11,7 @@
 		var currentSearchTerm = "";
 		var currentId;
 		var currentRecord = {};
+		var currentISBN;
 	});
 	
 	/*
@@ -25,6 +26,7 @@
 	function handleResponse(response) {
 		for (var i = 0; i < response.items.length; i++) {
 			var item = response.items[i];
+			//console.log(item.volumeInfo.industryIdentifiers);
 			//console.log(item);
 			// in production code, item.text should have the HTML entities escaped.
 			//document.getElementById("content").innerHTML += "<br>" + item.volumeInfo.publishedDate  + "&nbsp;" + item.volumeInfo.title + "&nbsp;" + item.id + "&nbsp;" + item.volumeInfo.authors 
@@ -32,8 +34,12 @@
 			
 			//Record(id, title, subtitle, authors, publisher, publishedDate, description)
 			record = new Record(item.id, item.volumeInfo.title, item.volumeInfo.subtitle, item.volumeInfo.authors,
-				item.volumeInfo.publisher, item.volumeInfo.publishedDate, item.volumeInfo.description, item.accessInfo.webReaderLink);
-				
+				item.volumeInfo.publisher, item.volumeInfo.publishedDate, item.volumeInfo.description, item.volumeInfo.industryIdentifiers, item.accessInfo.webReaderLink);
+			/*
+			items.volumeInfo.industryIdentifiers.type = “ISBN_10”
+
+			items.volumeInfo.industryIdentifiers.identifier = “0812936825"	
+			*/
 			recordSet.push(record);
 		} 
 		//console.log(recordSet);
@@ -68,72 +74,13 @@
     var form = document.getElementById('demoForm');
 	if ( window.addEventListener ) { // avoid errors in incapable browsers
 		form.addEventListener('submit', checkOnSubmit, true);
-		//primarySelect.addEventListener('change', showDescription, true);
 		primarySelect.addEventListener('change', buildCurrentRecord, true);
 		// determine if notes exist using AJAX before showing the button?
 		notesBtn.addEventListener('click', showNotes, true);
-		zippy.addEventListener('click', togglePreview, true);
+		googleBtn.addEventListener('click', createBookViewer, true);
 		
 	}
 	
-	/* Zippy code ex from html file */
-	/*
-	<div id="zippy"">
-        		<a href="javascript:togglePreview();">Toggle book preview</a>
-        		<div id="viewerCanvas" ></div>
-    		</div>
-    		
-    */
-     
-	/*
-	 * GOOGLE DYNAMIC BOOK PREVIEW FUNCTIONS 
-	 * 
-	 * For handling presentation of book in embedded viewer for a single title
-	 *
-	 */
-	
-	 var isbn;
-
-	function processDynamicLinksResponse(booksInfo) {
-		alert("inside processDynamicLinksResponse");
-		alert(booksInfo);
-		/*
-		$.each( booksInfo, function( i, val ) {
- 			 //$( "#" + val ).text( "Mine is " + val + "." );
- 			 alert(i);
- 		}); */
-		
-		for (id in booksInfo) {
-		  isbn = id;
-		  alert(isbn);
-		  if (booksInfo[id] && booksInfo[id].preview == 'partial') {
-			document.getElementById('zippy').style.display = 'block';
-			google.load("books", "0");
-		  }
-		}
-	}
-
-	function loadPreview() {
-		var viewer = new google.books.DefaultViewer(document.getElementById('viewerCanvas'));
-		viewer.load(isbn);
-	}
-
-	function togglePreview(e) {
-		alert("inside toggle preview event handler");
-		var canvas = document.getElementById('viewerCanvas');
-		if (canvas.style.display == 'none') {
-		  canvas.style.display = 'block';
-		  loadPreview();
-		} 
-		else {
-		  canvas.style.display = 'none';
-		}
-	}
-	
-	/*
-	 * END: GOOGLE DYNAMIC BOOK PREVIEW FUNCTIONS 
-	 *
-	 */
 	
 	/* 
 	 * checkOnSubmit
@@ -155,7 +102,7 @@
 			$('#notesArea').empty();
 		} 
 		else {
-			//alert( "Please enter your search terms." );
+			alert( "Please enter your search terms." );
 			form.elements[0].focus();
 		}	
 	}
@@ -164,14 +111,25 @@
 	 * buildCurrentRecord
 	 * @param - e 
 	 *
-	 * Creates a record for the currently selected value
-	 * Calls clear description & show description
+	 * Handles change event for primarySelect and
+	 * creates a record for the currently selected value.
+	 * 
+	 * Calls show description
+	 *
+	 * Clears the description and notesArea divs
+	 * Removes the viewer Canvas
+	 * Sets the value of currentISBN to that of the currentRecord
 	 */
 	 
 	/* Event handler for buildCurrentRecord */
 	function buildCurrentRecord(e) {
 		$('#description').empty();
 		$('#notesArea').empty();
+		//http://stackoverflow.com/questions/3450593/how-to-clear-the-content-of-a-div-using-javascript
+		var div = document.getElementById('viewerCanvas');
+		while(div.firstChild){
+			div.removeChild(div.firstChild);
+		}
 		currentId = primarySelect.value;
 		alert("We're in buildCurrentRecord and the value is " + currentId);
 		var descript;
@@ -184,15 +142,24 @@
 				if ( recordSet[i].id == currentId ) {
 					//alert( recordSet[i].id + " == " + currentId );
 					currentRecord = new Record(recordSet[i].id, recordSet[i].title, recordSet[i].subtitle, recordSet[i].authors,
-				recordSet[i].publisher, recordSet[i].publishedDate, recordSet[i].description, recordSet[i].previewLink); 
+				recordSet[i].publisher, recordSet[i].publishedDate, recordSet[i].description, recordSet[i].ISBN, recordSet[i].previewLink); 
 					
 				}
 			}
 		}
-		//alert(currentRecord.info());
+		alert(currentRecord.info());
 		alert(currentRecord.id);
+		
+		for ( var p in currentRecord.ISBN ) {
+			//console.log(currentRecord.ISBN[p]);
+			//console.log(currentRecord.ISBN[p].type + ": " + currentRecord.ISBN[p].identifier);
+			if 	( currentRecord.ISBN[p].type == "ISBN_10" ) {
+				currentISBN = currentRecord.ISBN[p].identifier;
+			}	
+		}
 		showDescription(currentRecord.description);
-		$("<script>", { src : "https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:0738531367&callback=processDynamicLinksResponse" } ).appendTo("body");
+		alert("Current ISBN is " + currentISBN);
+		//$("<script>", { src : "https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:0738531367&callback=processDynamicLinksResponse" } ).appendTo("body");
 	}
 	
 	/*
@@ -208,64 +175,6 @@
 		document.getElementById('description').innerHTML = description;
 	}
 	
-	/*
-	 * clearDescription
-	 *
-	 * @param - NONE
-	 *
-	 * called by a click of the form submit button
-	 * to do: add other data elements for the current record
-	 */
-	
-	/*
-	function clearDescription() {
-		$('#description').empty();
-	} */
-	
-	/* 
-	 * showGooglePreview
-	 * @param - e
-	 * 
-	 * Not working right now
-	 * Doesn't work when js code is separated into .js file 
-	 * Try with preview link embedded in an iframe
-	 */
-	
-	
-	/*
-	function showGooglePreview(e) {
-      //{ other_params : 'libraries=places&sensor=false&key=my_key', callback : ... })
-      
-      //google.load("books", "0", { other_params : 'key=AIzaSyDg_3CqVhiLDOU6EjCSkY9X7o_CGg8KwSQ' });
-      //google.load("books", "0");
-      //function initialize() {
-      //  var viewer = new google.books.DefaultViewer(document.getElementById('viewerCanvas'));
-      //  viewer.load('ISBN:0738531367');
-      //  //viewer.load('id:' + currentRecord.id);
-      //}
-      //google.setOnLoadCallback(initialize);
-      getMyBooks();
-    }
-    */
-    
-	/* Event handler for googleBtn click v2 */
-	/*
-	function showGooglePreview(e) {
-		alert("inside showGooglePreview function, current record is <br>" + currentRecord.previewLink);
-		
-		// set up an iframe in the viewerCanvas div
-		var x = document.createElement("IFRAME");
-		//document.getElementsByTagName("H1")[0].setAttribute("class", "democlass");
-		x.setAttribute("width", "600px");
-		x.setAttribute("height", "500px");
-		//document.getElementById("myFrame").src = "http://www.cnn.com";
-		x.src = currentRecord.previewLink;
-		document.getElementById('viewerCanvas').appendChild(x);
-		
-	}
-	*/
-	/* END: Event handler for googleBtn click v2 */
-	
 	/* 
 	 * showNotes
 	 *
@@ -277,37 +186,131 @@
 	 */
 	
 	function showNotes(e) {
-		/*
-		 * Conditional added for older IE
-		 */
-		if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-			var xhr = new XMLHttpRequest();
-		}
-		else {// code for IE6, IE5
-			var xhr = new ActiveXObject("Microsoft.XMLHTTP");
-		}
+		//if ( currentRecord ) {
+			/*
+			 * Conditional added for older IE
+			 */
+			if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+				var xhr = new XMLHttpRequest();
+			}
+			else {// code for IE6, IE5
+				var xhr = new ActiveXObject("Microsoft.XMLHTTP");
+			}
 		
-		xhr.open("GET", "http://p1.kdeb-csci-e15.me/ajax.php");
-		xhr.send();
+			xhr.open("GET", "http://p1.kdeb-csci-e15.me/ajax.php");
+			xhr.send();
 		
-		xhr.onreadystatechange=function()
-		{
-		  var el = document.getElementById("notesArea");
-		  if (xhr.readyState==4 && xhr.status==200)
-		  {
-			var obj = JSON.parse(this.response);
-			for ( var p in obj ) {
-				var innerObj = obj[p];
-				for ( var q in innerObj ) {
-					//console.log("id: " + innerObj[q].id + " notes: " + innerObj[q].notes);
-					if ( innerObj[q].id == currentRecord.id ) {
-						el.innerHTML = innerObj[q].notes;
+			xhr.onreadystatechange=function()
+			{
+			  var el = document.getElementById("notesArea");
+			  if (xhr.readyState==4 && xhr.status==200)
+			  {
+				var obj = JSON.parse(this.response);
+				for ( var p in obj ) {
+					var innerObj = obj[p];
+					for ( var q in innerObj ) {
+						//console.log("id: " + innerObj[q].id + " notes: " + innerObj[q].notes);
+						if ( innerObj[q].id == currentRecord.id ) {
+							el.innerHTML = innerObj[q].notes;
+						}
 					}
 				}
+			  }
 			}
-		  }
-		}
+		//}
+		//else {
+		//	alert("Please select a title before trying to see related notes.");
+		//	primarySelect.focus();
+		//}
+			
 	} 
+	
+	/*
+	 * createBookViewer()
+	 *
+	 * Uses Google javascript callback function and an iframe
+	 * to set up the Google embeddable viewer with the selected volume
+	 * (if available).
+	 *
+	 */
+	
+	//http://stackoverflow.com/questions/10418644/creating-an-iframe-with-given-html-dynamically
+	function createBookViewer() {
+		var iframe = document.createElement('iframe');
+		//iframe.setAttribute("id", "googIframe");
+		iframe.setAttribute("style","width:600px;height:650px");
+		//var html = '<body>Foo</body>';
+		
+		var html = '<!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><title>Google Book Search Embedded Viewer API Example</title><script type="text/javascript" src="https://www.google.com/jsapi"></script></head><body><p><script type="text/javascript" src="//www.google.com/jsapi"></script><script type="text/javascript">var isbn;function processDynamicLinksResponse(booksInfo){ for (id in booksInfo) { isbn = id; if (booksInfo[id] && booksInfo[id].preview == \'partial\') { document.getElementById(\'zippy\').style.display = \'block\'; google.load("books", "0"); } }function loadPreview(){ var viewer = new google.books.DefaultViewer(document.getElementById(\'viewerCanvas\')); viewer.load(isbn); } window.addEventListener("load", loadPreview); }</script><div id="zippy" ><div id="viewerCanvas" style="width: 600px; height: 500px; background-color: gray; display:block "></div></div><script src="https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:' + currentISBN + '&callback=processDynamicLinksResponse"></script></p></body></html>';
+		//'<body><!-- If the book is available for embedding, we will show a "zippy" that opens an inline preview below. --><p>some test text</p></body>';
+		console.log(html);
+		viewerCanvas.appendChild(iframe);
+		iframe.contentWindow.document.open();
+		iframe.contentWindow.document.write(html);
+		iframe.contentWindow.document.close();
+	}
+	
+	/*
+	var iframe = document.createElement('iframe');
+	var html = '<body>Foo</body>';
+	document.body.appendChild(iframe);
+	iframe.contentWindow.document.open();
+	iframe.contentWindow.document.write(html);
+	iframe.contentWindow.document.close();
+	*/
+	
+	/****************/
+	/* non -functioning */
+	/*********************/
+	
+	//function createBookViewer() {
+	//	var ifr = document.createElement('iframe');
+	//	//http://stackoverflow.com/questions/9422974/createelement-with-id
+	//	//g.setAttribute("id", "Div1");
+	//	ifr.setAttribute("id", "googIframe");
+	//	//var link = <script src="https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:0738531367&callback=processDynamicLinksResponse"></script> 
+	//	//$("<script>", {  src : "https://www.googleapis.com/books/v1/volumes?q=" + form.elements[0].value + "&callback=handleResponse"}).appendTo("body");
+	//	/* ifr.src = 'https://google-developers.appspot.com/books/docs/viewer/examples/book-dynamiclinks-zippy'; */
+	//	ifr.src = '../google_zippy_ex.html';
+	//	//getElementById('div_register').setAttribute("style","width:500px");
+	//	ifr.setAttribute("style","width:600px;height:650px");
+	//	//ifr.setAttribute("style","height:600px");
+	//	//"style","display:block;width:500px"
+	//	//alert("Inside createBookViewer: " + currentISBN);
+	//	//var link = <script src="https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:0738531367&callback=processDynamicLinksResponse"></script>
+	//	// TEST THIS OUT
+	//	
+	//	//.appendTo(ifr.contentWindow)
+	//	//console.log(newURL);
+	//	/*
+	//	ifr.addEventListener('load', function (e) {
+	//		$("<script>", { src : "https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:" + currentISBN + "&callback=processDynamicLinksResponse"}).appendTo("body");
+	//	}, false);
+	//	*/
+	//	viewerCanvas.appendChild(ifr);
+	//	getIframeProps();
+	//}
+	
+	//function getIframeProps() {
+	//	//var frame = window.frames[0];
+	//	//var frameWindow = frame.contentWindow || frame.contentDocument;
+	//	console.log(window.frames[0]);
+	//	//http://stackoverflow.com/questions/16103407/get-html-inside-iframe-using-jquery
+	//	//var iframeHTML = document.getElementById('googIframe').contentWindow.document.body.innerHTML
+	//	// $('#iframe').contents().find("html").html();
+	//	
+	//	var a = document.getElementById('googIframe');
+	//	var b = a.contentWindow.document.body.innerHTML
+	//	console.log(a);
+	//	console.log(b);
+	//}
+	
+	/****************/
+	/* non -functioning */
+	/*********************/
+		
+	
+	
 	
 
 	/* 
@@ -327,7 +330,12 @@
 	 * the handleResponse() callback method
 	 */
 	
-	function Record(id, title, subtitle, authors, publisher, publishedDate, description, previewLink, searchTerm) {
+	
+	//items.volumeInfo.industryIdentifiers.type = “ISBN_10”
+
+	//items.volumeInfo.industryIdentifiers.identifier = “0812936825"
+	
+	function Record(id, title, subtitle, authors, publisher, publishedDate, description, previewLink, ISBN, searchTerm) {
 			this.id = id; 				
 			this.title = title;		
 			this.subtitle = subtitle;	
@@ -336,6 +344,7 @@
 			this.publishedDate = publishedDate;				
 			this.description = description;
 			this.previewLink = previewLink;
+			this.ISBN = ISBN; // this needs to be an object
 			this.searchTerm = searchTerm;			
 	
 			//functions
@@ -344,7 +353,8 @@
 				return "id: " + this.id + " title: " + this.title + " subtitle: " + this.subtitle +
 					" authors: " + this.authors + " publisher: " + this.publisher + " publication date: " + 
 					this.publishedDate + " description: " + this.description + " preview link: " +
-					this.previewLink + "."
+					this.previewLink + " ISBN: " +
+					this.ISBN + "."
 			}; 
 	 } 
 	 

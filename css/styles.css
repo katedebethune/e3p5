@@ -43,18 +43,33 @@ body {
 }
 #description {
 	display: inline;
+	margin: 5px;
+    padding: 5px;
+    background-color: #33FFCC; 
+    
+}
+
+#notesArea {
+	display: inline;
+	margin: 5px;
+    padding: 5px;
+	background-color: #00FFFF; 
+	/* display:none; */
 }
 
 #viewerCanvas {
-	width: 600px; 
-	height: 500px
-	background-color: gray; 
-	display:none;
+	/* height: 600px; */
+    /* width: 500px; */
+	background-color: none; 
+	/* display:none; */
 }
 
-#zippy {
-	display: inline;
+#spacer {
+	height: 10px;
 }
+
+
+
 
 /*
 fieldset {

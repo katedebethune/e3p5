@@ -7,21 +7,6 @@
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <!-- <script type="text/javascript" src="js/gb_script.js"></script> -->
     <link rel="stylesheet" type="text/css" href="css/styles.css">
-    <!-- brute force starts here -->
-    <!--
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript">
-      google.load("books", "0");
-
-      function initialize() {
-        var viewer = new google.books.DefaultViewer(document.getElementById('viewerCanvas'));
-        viewer.load('ISBN:0738531367');
-      }
-
-      google.setOnLoadCallback(initialize);
-    </script>
-    -->
-    <!-- brute force ends here -->
   </head>
   <body>
 	<div id="wrapper">
@@ -53,33 +38,35 @@
 				</div>
 			</div>
 			
+			<!-- BUTTONS FOR AJAX CALLS & GOOGLE READER -->
+			<div id="actionButtons">
+				<button type="button" id="notesBtn">Get my notes for this book!</button>
+				<!-- https://developers.google.com/books/docs/viewer/examples/ -->
+				<button type="button" id="googleBtn">Get the Google reader version of this book!</button>
+			</div> <!-- END: BUTTONS FOR AJAX CALLS & GOOGLE READER -->
+			
 			<div id="descriptionSection">
 				<div id="description">
 					<p>some text to be replaced dynamically by a description</p>
 				</div>
 			</div>
-			<!-- 
-			<div id="viewerCanvas">
-			</div> -->
-			
-			<!-- Zippy example https://google-developers.appspot.com/books/docs/viewer/examples/book-dynamiclinks-zippy -->
-			<div id="zippy" >
-        		Toggle book preview
-        		<div id="viewerCanvas"></div>
-    		</div>
 			
 			<div id="notesArea">
 			</div>
 			
+			<div id="viewerCanvas">
+			</div>
+			
+			
+			<!-- <div id="spacer">
+			</div> -->
+			
+        	
+			
 			<div id="idArea">
 			</div>
 			
-			<!-- BUTTONS FOR AJAX CALLS & GOOGLE READER -->
-			<div id="actionButtons">
-				<button type="button" id="notesBtn">Get my notes for this book!</button>
-				<!-- https://developers.google.com/books/docs/viewer/examples/ -->
-				<!-- <button type="button" id="googleBtn">Get the Google reader version of this book!</button> -->
-			</div> <!-- END: BUTTONS FOR AJAX CALLS & GOOGLE READER -->
+			
 
 		</div> <!-- end mainContent -->
 	</div> <!-- end wrapper -->
