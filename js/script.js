@@ -1,8 +1,22 @@
-/*
-<script src="https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:0738531367&callback=processDynamicLinksResponse"></script>
-*/
-
-
+/* 
+ * A Personal Book Viewer
+ * Project 5 - Final Project
+ * CSCI e3 - May 11, 2015
+ * Kate de Bethune
+ *
+ * Summary: This project combines two pieces of sample code from the Google Books API
+ * developer documentation to create a simple, but powerful personal book viewer.
+ * The end user can 
+ *  --search the Google books database 
+ *  --select a title from a drop-down populated by the return values from the search
+ *  --see the description of the selected title
+ *  --click buttons to see
+ *		--their personal notes for that volume (if they exist)
+ *		--the Google reader preview version of volume, embedded in the page
+ *  at any time, a new book may be selected from the current list, or a new search
+ *  initiated.
+ */
+  
  $(document).ready(function() {
 		alert("document ready");
 		$('#demoForm')[0].reset();
@@ -95,6 +109,7 @@
 				$("#googIframe").remove();
 			}
 			$('#description').empty();
+			$('#descriptionHeader').empty();
 			currentSearchTerm = form.elements[0].value;
 			$("#content").html("");
 			recordSet = [];
@@ -127,6 +142,7 @@
 	 
 	/* Event handler for buildCurrentRecord */
 	function buildCurrentRecord(e) {
+		$('#descriptionHeader').empty();
 		$('#description').empty();
 		$('#notesArea').empty();
 		//http://stackoverflow.com/questions/3450593/how-to-clear-the-content-of-a-div-using-javascript
@@ -178,7 +194,10 @@
 	 */
 	
 	function showDescription(description) {
+		document.getElementById('descriptionHeader').innerHTML = "Description for: " + currentRecord.title + " by " + currentRecord.authors;
 		document.getElementById('description').innerHTML = description;
+		//$('#descriptionHeader').HTML() = "Description for: " + currentRecord.title + " by " + currentRecord.authors;
+		//$('#description').HTML() = description;
 	}
 	
 	/* 
@@ -241,43 +260,13 @@
 	 */
 	
 	//http://stackoverflow.com/questions/10418644/creating-an-iframe-with-given-html-dynamically
-	/* Version with error checking - doesn't work right now */
-	/*
-	function createBookViewer() {
-		if ( currentRecord ) {
-			var iframe = document.createElement('iframe');
-			iframe.setAttribute("id", "googIframe");
-			iframe.setAttribute("style","width:600px;height:600px");
-			//var html = '<body>Foo</body>';
-		
-			var html = '<!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><title>Google Book Search Embedded Viewer API Example</title><script type="text/javascript" src="https://www.google.com/jsapi"></script></head><body><p><script type="text/javascript" src="//www.google.com/jsapi"></script><script type="text/javascript">var isbn;function processDynamicLinksResponse(booksInfo){ for (id in booksInfo) { isbn = id; if (booksInfo[id] && booksInfo[id].preview == \'partial\') { document.getElementById(\'zippy\').style.display = \'block\'; google.load("books", "0"); } }function loadPreview(){ var viewer = new google.books.DefaultViewer(document.getElementById(\'viewerCanvas\')); viewer.load(isbn); } window.addEventListener("load", loadPreview); }</script><div id="zippy" ><div id="viewerCanvas" style="width: 600px; height: 500px; background-color: gray; display:block "></div></div><script src="https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:' + currentISBN + '&callback=processDynamicLinksResponse"></script></p></body></html>';
-			//'<body><!-- If the book is available for embedding, we will show a "zippy" that opens an inline preview below. --><p>some test text</p></body>';
-			console.log(html);
-			viewerCanvasOuter.appendChild(iframe);
-			iframe.contentWindow.document.open();
-			iframe.contentWindow.document.write(html);
-			iframe.contentWindow.document.close();
-		}
-		else if ( !currentRecord && currentSearchTerm.length > 0 )
-		{
-			alert("Please select a volume from the drop down.");
-			primarySelect.focus();
-		}
-		else 
-		{ 
-			alert("Please enter a search term and press submit");
-			form.elements[0].focus();
-		}
-	}
-	*/
-	
 	function createBookViewer() {
 			var iframe = document.createElement('iframe');
 			iframe.setAttribute("id", "googIframe");
-			iframe.setAttribute("style","width:600px;height:600px");
+			iframe.setAttribute("style","width:600px;height:600px;border:5px solid #00A014;");
 			//var html = '<body>Foo</body>';
 		
-			var html = '<!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><title>Google Book Search Embedded Viewer API Example</title><script type="text/javascript" src="https://www.google.com/jsapi"></script></head><body><p><script type="text/javascript" src="//www.google.com/jsapi"></script><script type="text/javascript">var isbn;function processDynamicLinksResponse(booksInfo){ for (id in booksInfo) { isbn = id; if (booksInfo[id] && booksInfo[id].preview == \'partial\') { document.getElementById(\'zippy\').style.display = \'block\'; google.load("books", "0"); } }function loadPreview(){ var viewer = new google.books.DefaultViewer(document.getElementById(\'viewerCanvas\')); viewer.load(isbn); } window.addEventListener("load", loadPreview); }</script><div id="zippy" ><div id="viewerCanvas" style="width: 600px; height: 500px; background-color: gray; display:block "></div></div><script src="https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:' + currentISBN + '&callback=processDynamicLinksResponse"></script></p></body></html>';
+			var html = '<!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><title>Google Book Search Embedded Viewer API Example</title><script type="text/javascript" src="https://www.google.com/jsapi"></script></head><body><p><script type="text/javascript" src="//www.google.com/jsapi"></script><script type="text/javascript">var isbn;function processDynamicLinksResponse(booksInfo){ for (id in booksInfo) { isbn = id; if (booksInfo[id] && booksInfo[id].preview == \'partial\') { document.getElementById(\'zippy\').style.display = \'block\'; google.load("books", "0"); } }function loadPreview(){ var viewer = new google.books.DefaultViewer(document.getElementById(\'viewerCanvas\')); viewer.load(isbn); } window.addEventListener("load", loadPreview); }</script><div id="zippy" ><div id="viewerCanvas" style="width: 600px; height: 500px; background-color: gray; display:block; margin-left:auto; margin-right:auto; "></div></div><script src="https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:' + currentISBN + '&callback=processDynamicLinksResponse"></script></p></body></html>';
 			//'<body><!-- If the book is available for embedding, we will show a "zippy" that opens an inline preview below. --><p>some test text</p></body>';
 			console.log(html);
 			viewerCanvasOuter.appendChild(iframe);
@@ -295,60 +284,7 @@
 	iframe.contentWindow.document.close();
 	*/
 	
-	/****************/
-	/* non -functioning */
-	/*********************/
 	
-	//function createBookViewer() {
-	//	var ifr = document.createElement('iframe');
-	//	//http://stackoverflow.com/questions/9422974/createelement-with-id
-	//	//g.setAttribute("id", "Div1");
-	//	ifr.setAttribute("id", "googIframe");
-	//	//var link = <script src="https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:0738531367&callback=processDynamicLinksResponse"></script> 
-	//	//$("<script>", {  src : "https://www.googleapis.com/books/v1/volumes?q=" + form.elements[0].value + "&callback=handleResponse"}).appendTo("body");
-	//	/* ifr.src = 'https://google-developers.appspot.com/books/docs/viewer/examples/book-dynamiclinks-zippy'; */
-	//	ifr.src = '../google_zippy_ex.html';
-	//	//getElementById('div_register').setAttribute("style","width:500px");
-	//	ifr.setAttribute("style","width:600px;height:650px");
-	//	//ifr.setAttribute("style","height:600px");
-	//	//"style","display:block;width:500px"
-	//	//alert("Inside createBookViewer: " + currentISBN);
-	//	//var link = <script src="https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:0738531367&callback=processDynamicLinksResponse"></script>
-	//	// TEST THIS OUT
-	//	
-	//	//.appendTo(ifr.contentWindow)
-	//	//console.log(newURL);
-	//	/*
-	//	ifr.addEventListener('load', function (e) {
-	//		$("<script>", { src : "https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:" + currentISBN + "&callback=processDynamicLinksResponse"}).appendTo("body");
-	//	}, false);
-	//	*/
-	//	viewerCanvas.appendChild(ifr);
-	//	getIframeProps();
-	//}
-	
-	//function getIframeProps() {
-	//	//var frame = window.frames[0];
-	//	//var frameWindow = frame.contentWindow || frame.contentDocument;
-	//	console.log(window.frames[0]);
-	//	//http://stackoverflow.com/questions/16103407/get-html-inside-iframe-using-jquery
-	//	//var iframeHTML = document.getElementById('googIframe').contentWindow.document.body.innerHTML
-	//	// $('#iframe').contents().find("html").html();
-	//	
-	//	var a = document.getElementById('googIframe');
-	//	var b = a.contentWindow.document.body.innerHTML
-	//	console.log(a);
-	//	console.log(b);
-	//}
-	
-	/****************/
-	/* non -functioning */
-	/*********************/
-		
-	
-	
-	
-
 	/* 
 	 * Record()
 	 * 
