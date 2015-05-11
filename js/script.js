@@ -17,7 +17,7 @@
  *  initiated.
  */
   
- $(document).ready(function() {
+ $("document").ready(function() {
 		alert("document ready");
 		$('#demoForm')[0].reset();
 		/* See if we can get recordSet out of the global scope */
@@ -26,7 +26,9 @@
 		var currentId;
 		var currentRecord = {};
 		var currentISBN;
-	});
+		var iframeSet = false;
+});
+	
 	
 	/*
 	 * handleResponse
@@ -40,8 +42,7 @@
 	function handleResponse(response) {
 		for (var i = 0; i < response.items.length; i++) {
 			var item = response.items[i];
-			//console.log(item.volumeInfo.industryIdentifiers);
-			//console.log(item);
+			
 			// in production code, item.text should have the HTML entities escaped.
 			//document.getElementById("content").innerHTML += "<br>" + item.volumeInfo.publishedDate  + "&nbsp;" + item.volumeInfo.title + "&nbsp;" + item.id + "&nbsp;" + item.volumeInfo.authors 
 			//+ "&nbsp;" + item.volumeInfo.readingModes.text  + "&nbsp;"+ item.volumeInfo.canonicalVolumeLink + "&nbsp;" + item.accessInfo.webReaderLink + "<br /><br />";
@@ -49,37 +50,17 @@
 			//Record(id, title, subtitle, authors, publisher, publishedDate, description)
 			record = new Record(item.id, item.volumeInfo.title, item.volumeInfo.subtitle, item.volumeInfo.authors,
 				item.volumeInfo.publisher, item.volumeInfo.publishedDate, item.volumeInfo.description, item.volumeInfo.industryIdentifiers, item.accessInfo.webReaderLink);
-			/*
-			items.volumeInfo.industryIdentifiers.type = “ISBN_10”
-
-			items.volumeInfo.industryIdentifiers.identifier = “0812936825"	
-			*/
 			recordSet.push(record);
 		} 
 		//console.log(recordSet);
+		
 		// Create the h1 displaying the current search term
 		document.getElementById('searchBanner').innerHTML += "<h1>You searched for: " + currentSearchTerm;
+		
 		// pass record set to another function that builds the select list
 		populateSelect(recordSet);
-		//giveMeAListofIds(recordSet);
 	}
-    
-    function giveMeAListofIds(recordSet) {
-		var r = this.recordSet
-		//console.log(r);
-		
-		$.each(r, function( index ) {
-			console.log(this.id);
-			//$('#idArea').html('\"id:\"'+ this.id + '\"notes:\" <br />');
-			document.getElementById('idArea').innerHTML += '{ \"id\": \"'+ this.id + '\", \"notes\":      }<br />'
-			//{ "id": "CcM4H6eswCUC", "notes": "Lorum Ipsum Dolor" }
-			
-		});
-		
- 	}
- 	
-
- 	   
+       
     /*
      * Event Listeners
      * 
@@ -87,12 +68,17 @@
      */
     var form = document.getElementById('demoForm');
 	if ( window.addEventListener ) { // avoid errors in incapable browsers
+		// QUERY GOOGLE FOR THE CURRENT SEARCH TERM
 		form.addEventListener('submit', checkOnSubmit, true);
-		primarySelect.addEventListener('change', buildCurrentRecord, true);
-		// determine if notes exist using AJAX before showing the button?
-		notesBtn.addEventListener('click', showNotes, true);
-		googleBtn.addEventListener('click', createBookViewer, true);
 		
+		// BUILD OUT THE DATA FOR THE CURRENT SELECTION
+		primarySelect.addEventListener('change', buildCurrentRecord, true);
+		
+		// SHOW NOTES
+		notesBtn.addEventListener('click', showNotes, true);
+		
+		// SHOW GOOGLE PREVIEW
+		googleBtn.addEventListener('click', createBookViewer, true);
 	}
 	
 	
@@ -105,6 +91,7 @@
 	function checkOnSubmit(e) {
 		//(form.elements[0].value);
 		if ( form.elements[0].value ) {
+			/* RESETS */
 			if ( document.getElementById('googIframe') ) {
 				$("#googIframe").remove();
 			}
@@ -115,10 +102,11 @@
 			recordSet = [];
 			document.getElementById('searchBanner').innerHTML = "";
 			document.getElementById('primarySelect').options.length = 1;
+			$('#notesArea').empty();
+			/* END RESETS */
 			// help for the following came from: http://stackoverflow.com/questions/610995/cant-append-script-element
 			$("<script>", {  src : "https://www.googleapis.com/books/v1/volumes?q=" + form.elements[0].value + "&callback=handleResponse"}).appendTo("body");
 			$('#demoForm')[0].reset();
-			$('#notesArea').empty();
 		} 
 		else {
 			alert( "Please enter your search terms." );
@@ -153,8 +141,7 @@
 		}
 		
 		currentId = primarySelect.value;
-		alert("We're in buildCurrentRecord and the value is " + currentId);
-		var descript;
+		//alert("We're in buildCurrentRecord and the value is " + currentId);
 		
 		// loop to find the array entry that matches the id
 		// write it the old fashioned way, then try jQuery each
@@ -180,8 +167,8 @@
 			}	
 		}
 		showDescription(currentRecord.description);
-		alert("Current ISBN is " + currentISBN);
-		//$("<script>", { src : "https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:0738531367&callback=processDynamicLinksResponse" } ).appendTo("body");
+		//alert("Current ISBN is " + currentISBN);
+		
 	}
 	
 	/*
@@ -194,10 +181,8 @@
 	 */
 	
 	function showDescription(description) {
-		document.getElementById('descriptionHeader').innerHTML = "Description for: " + currentRecord.title + " by " + currentRecord.authors;
-		document.getElementById('description').innerHTML = description;
-		//$('#descriptionHeader').HTML() = "Description for: " + currentRecord.title + " by " + currentRecord.authors;
-		//$('#description').HTML() = description;
+		$('#descriptionHeader').html("Description for: " + currentRecord.title + " by " + currentRecord.authors);
+		$('#description').html(description);
 	}
 	
 	/* 
@@ -211,43 +196,36 @@
 	 */
 	
 	function showNotes(e) {
-		//if ( currentRecord ) {
-			/*
-			 * Conditional added for older IE
-			 */
-			if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-				var xhr = new XMLHttpRequest();
-			}
-			else {// code for IE6, IE5
-				var xhr = new ActiveXObject("Microsoft.XMLHTTP");
-			}
-		
-			xhr.open("GET", "http://p1.kdeb-csci-e15.me/ajax.php");
-			xhr.send();
-		
-			xhr.onreadystatechange=function()
-			{
-			  var el = document.getElementById("notesArea");
-			  if (xhr.readyState==4 && xhr.status==200)
-			  {
-				var obj = JSON.parse(this.response);
-				for ( var p in obj ) {
-					var innerObj = obj[p];
-					for ( var q in innerObj ) {
-						//console.log("id: " + innerObj[q].id + " notes: " + innerObj[q].notes);
-						if ( innerObj[q].id == currentRecord.id ) {
-							el.innerHTML = innerObj[q].notes;
-						}
+		/*
+		 * Conditional added for older IE
+		 */
+		if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+			var xhr = new XMLHttpRequest();
+		}
+		else {// code for IE6, IE5
+			var xhr = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+	
+		xhr.open("GET", "http://p1.kdeb-csci-e15.me/ajax.php");
+		xhr.send();
+	
+		xhr.onreadystatechange=function()
+		{
+		  var el = document.getElementById("notesArea");
+		  if (xhr.readyState==4 && xhr.status==200)
+		  {
+			var obj = JSON.parse(this.response);
+			for ( var p in obj ) {
+				var innerObj = obj[p];
+				for ( var q in innerObj ) {
+					//console.log("id: " + innerObj[q].id + " notes: " + innerObj[q].notes);
+					if ( innerObj[q].id == currentRecord.id ) {
+						el.innerHTML = innerObj[q].notes;
 					}
 				}
-			  }
 			}
-		//}
-		//else {
-		//	alert("Please select a title before trying to see related notes.");
-		//	primarySelect.focus();
-		//}
-			
+		  }
+		}
 	} 
 	
 	/*
@@ -263,16 +241,14 @@
 	function createBookViewer() {
 			var iframe = document.createElement('iframe');
 			iframe.setAttribute("id", "googIframe");
-			iframe.setAttribute("style","width:600px;height:600px;border:5px solid #00A014;");
-			//var html = '<body>Foo</body>';
-		
+			iframe.setAttribute("style","width:600px;height:550px;border:5px solid #00A014;");
 			var html = '<!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><title>Google Book Search Embedded Viewer API Example</title><script type="text/javascript" src="https://www.google.com/jsapi"></script></head><body><p><script type="text/javascript" src="//www.google.com/jsapi"></script><script type="text/javascript">var isbn;function processDynamicLinksResponse(booksInfo){ for (id in booksInfo) { isbn = id; if (booksInfo[id] && booksInfo[id].preview == \'partial\') { document.getElementById(\'zippy\').style.display = \'block\'; google.load("books", "0"); } }function loadPreview(){ var viewer = new google.books.DefaultViewer(document.getElementById(\'viewerCanvas\')); viewer.load(isbn); } window.addEventListener("load", loadPreview); }</script><div id="zippy" ><div id="viewerCanvas" style="width: 600px; height: 500px; background-color: gray; display:block; margin-left:auto; margin-right:auto; "></div></div><script src="https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:' + currentISBN + '&callback=processDynamicLinksResponse"></script></p></body></html>';
-			//'<body><!-- If the book is available for embedding, we will show a "zippy" that opens an inline preview below. --><p>some test text</p></body>';
 			console.log(html);
 			viewerCanvasOuter.appendChild(iframe);
 			iframe.contentWindow.document.open();
 			iframe.contentWindow.document.write(html);
 			iframe.contentWindow.document.close();
+			iframeSet = true;	
 	}
 	
 	/*
@@ -301,33 +277,27 @@
 	 * Function to create custom object for each record passed in by 
 	 * the handleResponse() callback method
 	 */
-	
-	
-	//items.volumeInfo.industryIdentifiers.type = “ISBN_10”
-
-	//items.volumeInfo.industryIdentifiers.identifier = “0812936825"
-	
 	function Record(id, title, subtitle, authors, publisher, publishedDate, description, previewLink, ISBN, searchTerm) {
-			this.id = id; 				
-			this.title = title;		
-			this.subtitle = subtitle;	
-			this.authors = authors;				
-			this.publisher = publisher;					
-			this.publishedDate = publishedDate;				
-			this.description = description;
-			this.previewLink = previewLink;
-			this.ISBN = ISBN; // this needs to be an object
-			this.searchTerm = searchTerm;			
+		this.id = id; 				
+		this.title = title;		
+		this.subtitle = subtitle;	
+		this.authors = authors;				
+		this.publisher = publisher;					
+		this.publishedDate = publishedDate;				
+		this.description = description;
+		this.previewLink = previewLink;
+		this.ISBN = ISBN; // this needs to be an object
+		this.searchTerm = searchTerm;			
+
+		//functions
 	
-			//functions
-			
-			this.info = function() {
-				return "id: " + this.id + " title: " + this.title + " subtitle: " + this.subtitle +
-					" authors: " + this.authors + " publisher: " + this.publisher + " publication date: " + 
-					this.publishedDate + " description: " + this.description + " preview link: " +
-					this.previewLink + " ISBN: " +
-					this.ISBN + "."
-			}; 
+		this.info = function() {
+			return "id: " + this.id + " title: " + this.title + " subtitle: " + this.subtitle +
+				" authors: " + this.authors + " publisher: " + this.publisher + " publication date: " + 
+				this.publishedDate + " description: " + this.description + " preview link: " +
+				this.previewLink + " ISBN: " +
+				this.ISBN + "."
+		}; 
 	 } 
 	 
 	/* 
@@ -364,5 +334,7 @@
 			//append each option tag to to the select field
 			selectField.appendChild(element);
 		}
-	}  
+	} 
+	
+ 
 
