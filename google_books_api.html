@@ -5,7 +5,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <!-- jsapi necessary for Google Books preview functionlity -->
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <!-- <script type="text/javascript" src="js/gb_script.js"></script> -->
     <link rel="stylesheet" type="text/css" href="css/styles.css">
     <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Raleway">
   </head>
@@ -16,12 +15,12 @@
 				<form id="demoForm" action="#" onSubmit="return false">
 					<!-- <fieldset form="demoForm"> -->
 					<!-- use of fieldset breaks submit -->
+					<!-- SEARCH BOX -->
 					<legend>Search Google Books:</legend>
                         <br />
 						<input type="text" name="searchString" id="searchString">
 						<input type="submit" value="Submit">
 					<!-- </fieldset> -->
-					
 				</form>
 			</section>
 			<div id="content">
@@ -59,20 +58,21 @@
 				<!-- https://developers.google.com/books/docs/viewer/examples/ -->
 				<button type="button" id="googleBtn">Get the Google preview of this book!</button>
 			</div> <!-- END: BUTTONS FOR AJAX CALLS & GOOGLE READER -->
+			
 			<br />
 			<br />
+			
+			<!-- NOTES GO HERE -->
 			<div id="notesArea">
-				<!-- <div id="notes">
-				</div> -->
 			</div>
+			
 			<br />
 			<br />
+			
+			<!-- GOOGLE BOOK READER GOES HERE -->
 			<div id="viewerCanvasOuter">
 			</div>	
 			
-			
-			
-
 		</div> <!-- end mainContent -->
 	</div> <!-- end wrapper -->
     <script type="text/javascript" src="js/script.js"></script>

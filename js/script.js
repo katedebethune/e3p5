@@ -81,7 +81,6 @@
 		googleBtn.addEventListener('click', createBookViewer, true);
 	}
 	
-	
 	/* 
 	 * checkOnSubmit
 	 * @param - e
@@ -168,7 +167,6 @@
 		}
 		showDescription(currentRecord.description);
 		//alert("Current ISBN is " + currentISBN);
-		
 	}
 	
 	/*
@@ -250,17 +248,7 @@
 			iframe.contentWindow.document.close();
 			iframeSet = true;	
 	}
-	
-	/*
-	var iframe = document.createElement('iframe');
-	var html = '<body>Foo</body>';
-	document.body.appendChild(iframe);
-	iframe.contentWindow.document.open();
-	iframe.contentWindow.document.write(html);
-	iframe.contentWindow.document.close();
-	*/
-	
-	
+		
 	/* 
 	 * Record()
 	 * 
