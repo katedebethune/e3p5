@@ -14,8 +14,8 @@
  * select a title from a drop-down populated by the return values from the search
  * see the description of the selected title
  * click buttons to see
-    --their personal notes for that volume (if they exist)
-    --the Google reader preview version of volume, embedded in the page
+  * their personal notes for that volume (if they exist)
+  * the Google reader preview version of volume, embedded in the page
  
  At any time, a new book may be selected from the current list, or a new search
  initiated.
