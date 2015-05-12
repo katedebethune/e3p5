@@ -41,6 +41,7 @@ body {
 
 #descriptionSection {
     float: left;
+    padding-bottom: 15px;
 }
 
 #descriptionHeader {
@@ -51,6 +52,7 @@ body {
 #description {
 	display: inline;
 	font-size: .75em;
+	
 }
 
 #notesArea {
@@ -58,6 +60,8 @@ body {
 	float: left;
 	font-size: .75em;
 	width: 930px;
+	padding-top: 15px;
+	padding-bottom: 15px;
 }
 
 #viewerCanvasOuter {
@@ -78,6 +82,8 @@ body {
 #spacer {
 	height: 15px;
 }
+
+
 
 
 

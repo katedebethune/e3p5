@@ -18,7 +18,7 @@
  */
   
  $("document").ready(function() {
-		alert("document ready");
+		//alert("document ready");
 		$('#demoForm')[0].reset();
 		/* See if we can get recordSet out of the global scope */
 		var recordSet = [];
@@ -140,7 +140,6 @@
 		}
 		
 		currentId = primarySelect.value;
-		//alert("We're in buildCurrentRecord and the value is " + currentId);
 		
 		// loop to find the array entry that matches the id
 		// write it the old fashioned way, then try jQuery each
@@ -155,8 +154,6 @@
 				}
 			}
 		}
-		alert(currentRecord.info());
-		alert(currentRecord.id);
 		
 		for ( var p in currentRecord.ISBN ) {
 			//console.log(currentRecord.ISBN[p]);
@@ -166,7 +163,6 @@
 			}	
 		}
 		showDescription(currentRecord.description);
-		//alert("Current ISBN is " + currentISBN);
 	}
 	
 	/*
@@ -216,11 +212,13 @@
 			for ( var p in obj ) {
 				var innerObj = obj[p];
 				for ( var q in innerObj ) {
-					//console.log("id: " + innerObj[q].id + " notes: " + innerObj[q].notes);
+					//alert("id: " + innerObj[q].id + " notes: " + innerObj[q].notes + " current record id " + currentRecord.id);
 					if ( innerObj[q].id == currentRecord.id ) {
 						el.innerHTML = innerObj[q].notes;
+						break;
 					}
-				}
+				el.innerHTML = "You have no notes for this volume.";	
+				}		
 			}
 		  }
 		}

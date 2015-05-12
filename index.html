@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Books API Example</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- jsapi necessary for Google Books preview functionlity -->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Raleway">
+  </head>
+  <body>
+	<div id="wrapper">
+		<div id="mainContent">
+			<section id="inputFormSection">
+				<form id="demoForm" action="#" onSubmit="return false">
+					<!-- <fieldset form="demoForm"> -->
+					<!-- use of fieldset breaks submit -->
+					<!-- SEARCH BOX -->
+					<legend>Search Google Books:</legend>
+                        <br />
+						<input type="text" name="searchString" id="searchString">
+						<input type="submit" value="Submit">
+					<!-- </fieldset> -->
+				</form>
+			</section>
+			<div id="content">
+			</div>
+			<div id="searchBanner">
+			</div>
+			<!-- SELECT BOX -->
+			<div id="titleSelectSection">
+				<div id="selects">
+					<div id="titleSelect" style="float:left;margin-right:15px;"> Select a title from the following: <br>
+						<select name="primarySelect" id="primarySelect">
+							<option>----</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			
+			<div id="descriptionSection">
+				<div id="descriptionHeader">
+				</div>
+				
+				<div id="spacer">
+				</div>
+				
+				<div id="description">
+					
+				</div>
+			</div>
+			<div id="spacer">
+				</div>
+			
+			<!-- BUTTONS FOR AJAX CALLS & GOOGLE READER -->
+			<div id="actionButtons">
+				<button type="button" id="notesBtn">Get my notes for this book!</button>
+				<!-- https://developers.google.com/books/docs/viewer/examples/ -->
+				<button type="button" id="googleBtn">Get the Google preview of this book!</button>
+			</div> <!-- END: BUTTONS FOR AJAX CALLS & GOOGLE READER -->
+			
+			<div id="spacer">
+				</div>
+			
+			<!-- NOTES GO HERE -->
+			<div id="notesArea">
+			</div>
+			
+			<br />
+			<br />
+			
+			<!-- GOOGLE BOOK READER GOES HERE -->
+			<div id="viewerCanvasOuter">
+			</div>	
+			
+		</div> <!-- end mainContent -->
+	</div> <!-- end wrapper -->
+    <script type="text/javascript" src="js/script.js"></script>
+  </body>
+</html>
+
+
+
+
+
