@@ -15,6 +15,12 @@
  *		--the Google reader preview version of volume, embedded in the page
  *  at any time, a new book may be selected from the current list, or a new search
  *  initiated.
+ *
+ *  Google example code from the Google Books Developer documentation 
+ *  was studied and adapted for this project. Specifically:
+ *  https://developers.google.com/books/docs/viewer/developers_guide
+ *  https://developers.google.com/books/docs/getting-started
+ *  https://developers.google.com/books/docs/v1/getting_started
  */
   
  $("document").ready(function() {
@@ -43,16 +49,10 @@
 		for (var i = 0; i < response.items.length; i++) {
 			var item = response.items[i];
 			
-			// in production code, item.text should have the HTML entities escaped.
-			//document.getElementById("content").innerHTML += "<br>" + item.volumeInfo.publishedDate  + "&nbsp;" + item.volumeInfo.title + "&nbsp;" + item.id + "&nbsp;" + item.volumeInfo.authors 
-			//+ "&nbsp;" + item.volumeInfo.readingModes.text  + "&nbsp;"+ item.volumeInfo.canonicalVolumeLink + "&nbsp;" + item.accessInfo.webReaderLink + "<br /><br />";
-			
-			//Record(id, title, subtitle, authors, publisher, publishedDate, description)
 			record = new Record(item.id, item.volumeInfo.title, item.volumeInfo.subtitle, item.volumeInfo.authors,
 				item.volumeInfo.publisher, item.volumeInfo.publishedDate, item.volumeInfo.description, item.volumeInfo.industryIdentifiers, item.accessInfo.webReaderLink);
 			recordSet.push(record);
 		} 
-		//console.log(recordSet);
 		
 		// Create the h1 displaying the current search term
 		document.getElementById('searchBanner').innerHTML += "<h1>You searched for: " + currentSearchTerm;
@@ -142,7 +142,6 @@
 		currentId = primarySelect.value;
 		
 		// loop to find the array entry that matches the id
-		// write it the old fashioned way, then try jQuery each
 		if ( recordSet ) {
 			var len = recordSet.length;
 			for ( var i = 0 ; i < len ; i++ ) {
@@ -294,7 +293,6 @@
 	 * populates the select control with titles & authors 
 	 */
 	function populateSelect(recordSet) {
-		'use strict';
 		//get the select field by id
 		var selectField = document.getElementById("primarySelect"); 
 	
