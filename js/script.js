@@ -162,6 +162,7 @@
 			}	
 		}
 		showDescription(currentRecord.description);
+		alert(currentISBN);
 	}
 	
 	/*
