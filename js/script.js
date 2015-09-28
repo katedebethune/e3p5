@@ -239,21 +239,16 @@
 	//http://stackoverflow.com/questions/10418644/creating-an-iframe-with-given-html-dynamically
 	function createBookViewer() {
 			//alert(currentRecord.embeddable);
-			if ( currentRecord.embeddable ) {
-				var iframe = document.createElement('iframe');
-				iframe.setAttribute("id", "googIframe");
-				iframe.setAttribute("style","width:600px;height:550px;border:5px solid #00A014;");
-				var html = '<!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><title>Google Book Search Embedded Viewer API Example</title><script type="text/javascript" src="https://www.google.com/jsapi"></script></head><body><p><script type="text/javascript" src="//www.google.com/jsapi"></script><script type="text/javascript">var isbn;function processDynamicLinksResponse(booksInfo){ for (id in booksInfo) { isbn = id; if (booksInfo[id] && booksInfo[id].preview == \'partial\') { document.getElementById(\'zippy\').style.display = \'block\'; google.load("books", "0"); } }function loadPreview(){ var viewer = new google.books.DefaultViewer(document.getElementById(\'viewerCanvas\')); viewer.load(isbn); } window.addEventListener("load", loadPreview); }</script><div id="zippy" ><div id="viewerCanvas" style="width: 600px; height: 500px; background-color: gray; display:block; margin-left:auto; margin-right:auto; "></div></div><script src="https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:' + currentISBN + '&callback=processDynamicLinksResponse"></script></p></body></html>';
-				console.log(html);
-				viewerCanvasOuter.appendChild(iframe);
-				iframe.contentWindow.document.open();
-				iframe.contentWindow.document.write(html);
-				iframe.contentWindow.document.close();
-				iframeSet = true;	
-			} 
-			else {
-				alert("Sorry, Google does not allow this volume to be previewed. Please select another choice from the drop-down.");
-			}
+			var iframe = document.createElement('iframe');
+			iframe.setAttribute("id", "googIframe");
+			iframe.setAttribute("style","width:600px;height:550px;border:5px solid #00A014;");
+			var html = '<!DOCTYPE html "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><title>Google Book Search Embedded Viewer API Example</title><script type="text/javascript" src="https://www.google.com/jsapi"></script></head><body><p><script type="text/javascript" src="//www.google.com/jsapi"></script><script type="text/javascript">var isbn;function processDynamicLinksResponse(booksInfo){ for (id in booksInfo) { isbn = id; if (booksInfo[id] && booksInfo[id].preview == \'partial\') { document.getElementById(\'zippy\').style.display = \'block\'; google.load("books", "0"); } }function loadPreview(){ var viewer = new google.books.DefaultViewer(document.getElementById(\'viewerCanvas\')); viewer.load(isbn); } window.addEventListener("load", loadPreview); }</script><div id="zippy" ><div id="viewerCanvas" style="width: 600px; height: 500px; background-color: gray; display:block; margin-left:auto; margin-right:auto; "></div></div><script src="https://encrypted.google.com/books?jscmd=viewapi&bibkeys=ISBN:' + currentISBN + '&callback=processDynamicLinksResponse"></script></p></body></html>';
+			console.log(html);
+			viewerCanvasOuter.appendChild(iframe);
+			iframe.contentWindow.document.open();
+			iframe.contentWindow.document.write(html);
+			iframe.contentWindow.document.close();
+			iframeSet = true;	
 	}
 		
 	/* 
