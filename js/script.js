@@ -107,7 +107,7 @@
 			$('#notesArea').empty();
 			/* END RESETS */
 			// help for the following came from: http://stackoverflow.com/questions/610995/cant-append-script-element
-			$("<script>", {  src : "https://www.googleapis.com/books/v1/volumes?q=" + form.elements[0].value + "&startIndex=0&maxResults=40&callback=handleResponse"}).appendTo("body");
+			$("<script>", {  src : "https://www.googleapis.com/books/v1/volumes?q=" + form.elements[0].value + "&startIndex=0&maxResults=100&callback=handleResponse"}).appendTo("body");
 			//maxResults
 			$('#demoForm')[0].reset();
 		} 
