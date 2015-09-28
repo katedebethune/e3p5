@@ -329,6 +329,7 @@
 				//append each option tag to to the select field
 				selectField.appendChild(element);
 			}
+		}
 	} 
 	
  
