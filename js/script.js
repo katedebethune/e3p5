@@ -46,6 +46,9 @@
 	 */ 
 	
 	function handleResponse(response) {
+		
+		console.log(response);
+
 		for (var i = 0; i < response.items.length; i++) {
 			var item = response.items[i];
 			
@@ -309,23 +312,23 @@
 
 		//Loop through the array
 		for ( var i = 0; i < recordSet.length ; i++ ) {
-		//for(var i = 0; i < optionsSelect.length; i++) {
+			if ( recordSet[i].embeddable ) {		
 	
-			//create an option tag
-			var element = document.createElement("option");
+				//create an option tag
+				var element = document.createElement("option");
 
-			//add the strings from your array into each option tag
-			var words = document.createTextNode(recordSet[i].title + " by " + recordSet[i].authors);
+				//add the strings from your array into each option tag
+				var words = document.createTextNode(recordSet[i].title + " by " + recordSet[i].authors);
 	
-			//set the value of each option to the strings from your array
-			element.value = recordSet[i].id;
+				//set the value of each option to the strings from your array
+				element.value = recordSet[i].id;
 	
-			//append each Text Node to each option tag.
-			element.appendChild(words);
+				//append each Text Node to each option tag.
+				element.appendChild(words);
 	 
-			//append each option tag to to the select field
-			selectField.appendChild(element);
-		}
+				//append each option tag to to the select field
+				selectField.appendChild(element);
+			}
 	} 
 	
  
