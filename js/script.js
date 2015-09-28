@@ -314,7 +314,7 @@
 				var element = document.createElement("option");
 
 				//add the strings from your array into each option tag
-				var words = document.createTextNode(recordSet[i].title + " by " + recordSet[i].authors);
+				var words = document.createTextNode(recordSet[i].title + " by " + recordSet[i].authors + " published: " + recordSet[i].publishedDate);
 	
 				//set the value of each option to the strings from your array
 				element.value = recordSet[i].id;
