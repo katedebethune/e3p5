@@ -204,7 +204,9 @@
 			var xhr = new ActiveXObject("Microsoft.XMLHTTP");
 		}
 	
-		xhr.open("GET", "http://p1.kdeb-csci-e15.me/ajax.php");
+		//xhr.open("GET", "http://p1.kdeb-csci-e15.me/ajax.php");
+		//Testing s3 bucket to get CORS working for a simple example
+		xhr.open("GET", "https://s3-us-west-2.amazonaws.com/studioresources/ajax.json");
 		xhr.send();
 	
 		xhr.onreadystatechange=function()
