@@ -206,7 +206,7 @@
 	
 		//xhr.open("GET", "http://p1.kdeb-csci-e15.me/ajax.php");
 		//Testing s3 bucket to get CORS working for a simple example
-		xhr.open("GET", "https://s3-us-west-2.amazonaws.com/studioresources/ajax.php");
+		xhr.open("GET", "https://s3-us-west-2.amazonaws.com/studioresources/ajax.php/", "true");
 		xhr.send();
 	
 		xhr.onreadystatechange=function()
